@@ -15,7 +15,7 @@ RUN mkdir /src
 WORKDIR /src
 ADD . /src/
 
-RUN ruby hookslistener.rb
+RUN ruby simple.rb
 
 EXPOSE 4567
 
