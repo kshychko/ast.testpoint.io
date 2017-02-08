@@ -1,7 +1,6 @@
 FROM jekyll/jekyll
 
-RUN mkdir /opt
-
+# install thin, sinatra
 RUN mkdir -p /root/.ssh
 
 ADD id_rsa /root/.ssh/id_rsa
