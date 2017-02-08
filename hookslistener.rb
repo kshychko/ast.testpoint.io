@@ -19,16 +19,6 @@ post '/payload' do
   authorName = push["head_commit"]["author"]["name"]
   commitMessage = push["head_commit"]["message"]
 
- system("sh sh/git-pull.sh"
-	+ ' -n ' + repoName
-	+ ' -u ' + repoURL
-	+ ' -a "' + authorName + '"'
-	+ ' -b ' + authorEmail
-	+ ' -c "' + commitMessage + '"'
-	+ ' -t ' + 'ausdigital.github.io'
-	+ ' -r ' + 'git@github.com:k.shychko/ausdigital.github.io.git')
-  
-
  "#{eventType} #{repoURL}, #{repoName}, #{authorEmail}, #{authorName}, #{commitMessage}".strip
 
 	
