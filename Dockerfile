@@ -1,7 +1,7 @@
 FROM jekyll/jekyll
 
 # install thin, sinatra
-RUN /bin/bash -l -c "gem uinstall thin"
+RUN /bin/bash -l -c "gem uninstall thin"
 RUN /bin/bash -l -c "gem install sinatra"
 
 RUN mkdir -p /root/.ssh
