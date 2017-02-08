@@ -11,12 +11,13 @@ ENV APP_HOME /src
 ENV HOME /root
 RUN mkdir $APP_HOME
 RUN mkdir /opt
+RUN npm install forever -g --silent
+
 WORKDIR $APP_HOME
-ADD . /src/
-COPY Gemfile* $APP_HOME/
-RUN bundle install
+ADD . $APP_HOME/
 
-CMD ["ruby", "hookslistener.rb"]
+RUN npm install --silent
 
+EXPOSE 3000
 
-EXPOSE 4567
+CMD forever --minUptime 100 bin/www  -o out.log -e err.log
