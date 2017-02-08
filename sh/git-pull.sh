@@ -89,9 +89,25 @@ cp -rf /opt/$REPO_NAME/docs/* /opt/$TARGET_REPO_NAME/specs/$REPO_NAME/
 
 cd /opt/$TARGET_REPO_NAME
 
-git add --all
+bundle install
+RESULT=$?
+if [[ ${RESULT} -ne 0 ]]; then
+	echo -e "\nCan't bundle install"
+	exit
+fi
+
+bundle exec jekyll build
+RESULT=$?
+if [[ ${RESULT} -ne 0 ]]; then
+	echo -e "\nCan't bundle exec jekyll build"
+	exit
+fi
+
+git add specs/*
 
 git commit -m "$COMMIT_MESSAGE"
+
+git reset --hard HEAD
 
 git pull --rebase
 
