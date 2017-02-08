@@ -1,0 +1,8 @@
+version: '2'
+services:
+  web:
+    build: .
+    image: ast.testpoint.io:latest
+    container_name: ast.testpoint.io
+    ports:
+      - "3032:4567"
