@@ -1,4 +1,4 @@
-FROM jekyll/jekyll
+FROM wetransform/jekyll
 
 RUN mkdir -p /root/.ssh
 
