@@ -1,4 +1,4 @@
-FROM wetransform/jekyll
+FROM jekyll/jekyll
 
 RUN mkdir -p /root/.ssh
 
@@ -10,7 +10,7 @@ RUN chmod 700 /root/.ssh/id_rsa
 ENV APP_HOME /src
 ENV HOME /root
 RUN mkdir $APP_HOME
-#RUN mkdir /opt
+RUN mkdir /opt
 WORKDIR $APP_HOME
 ADD . /src/
 COPY Gemfile* $APP_HOME/
