@@ -87,9 +87,14 @@ fi
 
 cp -rf /opt/$REPO_NAME/docs/* /opt/$TARGET_REPO_NAME/specs/$REPO_NAME/
 
-cd /opt/$TARGET_REPO_NAME
+#cd /opt/$TARGET_REPO_NAME
 
-bundle install
+cp -rf /opt/$TARGET_REPO_NAME/* /srv/jekyll/
+rm -rf /opt/$TARGET_REPO_NAME/specs/$REPO_NAME/
+
+
+cd /srv/jekyll
+BUNDLE_SPECIFIC_PLATFORM=true bundle install
 RESULT=$?
 if [[ ${RESULT} -ne 0 ]]; then
 	echo -e "\nCan't bundle install"
@@ -103,11 +108,15 @@ if [[ ${RESULT} -ne 0 ]]; then
 	exit
 fi
 
-git add specs/*
+cp -rf /srv/jekyll/_site/specs/$REPO_NAME/* /opt/$TARGET_REPO_NAME/specs/$REPO_NAME/
+
+cd /opt/$TARGET_REPO_NAME
+
+git add specs/$REPO_NAME/*
 
 git commit -m "$COMMIT_MESSAGE"
 
-git reset --hard HEAD
+#git reset --hard HEAD
 
 git pull --rebase
 
