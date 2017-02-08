@@ -5,4 +5,4 @@ services:
     image: ast.testpoint.io:latest
     container_name: ast.testpoint.io
     ports:
-      - "3032:4567"
+      - "3032:3000"
