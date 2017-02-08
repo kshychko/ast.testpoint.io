@@ -1,7 +1,7 @@
 FROM jekyll/jekyll
 
 # install thin, sinatra
-RUN /bin/bash -l -c "gem install thin"
+RUN /bin/bash -l -c "gem uinstall thin"
 RUN /bin/bash -l -c "gem install sinatra"
 
 RUN mkdir -p /root/.ssh
@@ -15,7 +15,7 @@ RUN mkdir /src
 WORKDIR /src
 ADD . /src/
 
-RUN ruby simple.rb
+RUN ruby hookslistener.rb
 
 EXPOSE 4567
 
