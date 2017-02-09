@@ -1,9 +1,5 @@
 #!/bin/bash
 
-eval $(ssh-agent -s)
-ssh-add ~/.ssh/id_rsa
-ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts
-
 # Parse options
 while getopts ":n:m:u:t:r:a:b:c:" opt; do
     case $opt in
