@@ -65,27 +65,38 @@ if [ -d "specs" ]; then
     mkdir "specs"
 fi
 
-cd /opt/$TARGET_REPO_NAME/specs
-if [ -d "$REPO_NAME" ]; then
-    rm -rf $REPO_NAME
-fi
 
-mkdir $REPO_NAME
+## declare an array variable
+declare -a REPO_NAMES=("ausdigital-bill" "ausdigital-code" "ausdigital-dcl" "ausdigital-dcp" "ausdigital-idp" "ausdigital-nry" 
+					   "ausdigital-syn" "ausdigital-tap" "ausdigital-tap-gw")
 
-cd /opt/
-if [ -d "$REPO_NAME" ]; then
-    cd /opt/$REPO_NAME
-    git pull origin master
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo -e "\nCan't pull ${REPO_URL} to ${REPO_NAME} repo"
-        exit
-    fi
-    else
-    git clone $REPO_URL
-fi
+## now loop through the above array
+for i in "${REPO_NAMES[@]}"
+do
+	cd /opt/
 
-cp -rf /opt/$REPO_NAME/docs/. /opt/$TARGET_REPO_NAME/specs/$REPO_NAME
+	if [ -d "$i" ]; then
+		cd /opt/$i
+		git pull origin master
+		RESULT=$?
+		if [[ ${RESULT} -ne 0 ]]; then
+			echo -e "\nCan't pull ${i} repo"
+			exit
+		fi
+#		else
+#		git clone $i
+	fi
+	cd /opt/$TARGET_REPO_NAME/specs
+	if [ -d "$i" ]; then
+		rm -rf $i
+	fi
+
+	mkdir $i
+
+	cp -rf /opt/$i/docs/. /opt/$TARGET_REPO_NAME/specs/$i
+   # or do whatever with individual element of the array
+done
+
 
 #cd /opt/$TARGET_REPO_NAME
 rm -rf /srv/jekyll/*
@@ -114,7 +125,7 @@ cd /opt/$TARGET_REPO_NAME
 
 git add --all
 
-git commit -m "update specifications pages due to $COMMIT_MESSAGE"
+git commit -m "update specifications pages due to commit \"$COMMIT_MESSAGE\" to \"$REPO_NAME\""
 
 #git reset --hard HEAD
 
