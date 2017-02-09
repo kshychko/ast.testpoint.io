@@ -90,7 +90,7 @@ cp -rf /opt/$REPO_NAME/docs/. /opt/$TARGET_REPO_NAME/specs/$REPO_NAME
 #cd /opt/$TARGET_REPO_NAME
 rm -rf /srv/jekyll/*
 cp -rf /opt/$TARGET_REPO_NAME/. /srv/jekyll
-rm -rf /opt/$TARGET_REPO_NAME/specs/.
+rm -rf /opt/$TARGET_REPO_NAME/specs/*
 
 
 cd /srv/jekyll
