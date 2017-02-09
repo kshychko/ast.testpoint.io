@@ -15,7 +15,7 @@ var logger = log4js.getLogger('app');
 
 
 router.get('/', function (req, res, next) {
-	exec('sh sh/init.sh', function (err, stdout, stderr) {
+	exec('bash sh/init.sh', function (err, stdout, stderr) {
                 logger.error(err)
                 logger.log(stdout)
                 logger.error(stderr);
@@ -39,7 +39,7 @@ router.post('/', function (req, res, next) {
         logger.log("authorEmail - ", authorEmail);
         logger.log("authorName - ", authorName);
         logger.log("commitMessage - ", commitMessage);
-        exec('sh sh/git-pull.sh'
+        exec('bash sh/git-pull.sh'
             + ' -n ' + repoName
             + ' -u ' + repoURL
             + ' -a "' + authorName + '"'

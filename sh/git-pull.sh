@@ -63,7 +63,7 @@ fi
 
 
 ## declare an array variable
-declare -a REPO_NAMES=("ausdigital-bill" "ausdigital-code" "ausdigital-dcl" "ausdigital-dcp" "ausdigital-idp" "ausdigital-nry" "ausdigital-syn" "ausdigital-tap" "ausdigital-tap-gw")
+REPO_NAMES=("ausdigital-bill" "ausdigital-code" "ausdigital-dcl" "ausdigital-dcp" "ausdigital-idp" "ausdigital-nry" "ausdigital-syn" "ausdigital-tap" "ausdigital-tap-gw")
 
 ## now loop through the above array
 for i in "${REPO_NAMES[@]}"
