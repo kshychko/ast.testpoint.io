@@ -85,11 +85,11 @@ if [ -d "$REPO_NAME" ]; then
     git clone $REPO_URL
 fi
 
-cp -rf /opt/$REPO_NAME/docs/* /opt/$TARGET_REPO_NAME/specs/$REPO_NAME/
+cp -rf /opt/$REPO_NAME/docs/. /opt/$TARGET_REPO_NAME/specs/$REPO_NAME
 
 #cd /opt/$TARGET_REPO_NAME
 rm -rf /srv/jekyll/*
-cp -rf /opt/$TARGET_REPO_NAME/* /srv/jekyll/
+cp -rf /opt/$TARGET_REPO_NAME/. /srv/jekyll
 rm -rf /opt/$TARGET_REPO_NAME/specs/$REPO_NAME/
 
 
@@ -108,7 +108,7 @@ if [[ ${RESULT} -ne 0 ]]; then
 	exit
 fi
 
-cp -rf /srv/jekyll/_site/specs/$REPO_NAME/* /opt/$TARGET_REPO_NAME/specs/$REPO_NAME/
+cp -rf /srv/jekyll/_site/specs/$REPO_NAME/. /opt/$TARGET_REPO_NAME/specs/$REPO_NAME
 
 cd /opt/$TARGET_REPO_NAME
 
