@@ -47,9 +47,9 @@ while getopts ":n:m:u:t:r:a:b:c:" opt; do
 done
 
 
-git config --global user.email $COMMIT_AUTHOR_EMAIL
+git config --global user.email "specs.generator@ausdigital.org"
 
-git config --global user.name $COMMIT_AUTHOR_EMAIL
+git config --global user.name "Specification Generator"
 
 cd /opt
 if [ -d "$TARGET_REPO_NAME" ]; then
@@ -90,7 +90,7 @@ cp -rf /opt/$REPO_NAME/docs/. /opt/$TARGET_REPO_NAME/specs/$REPO_NAME
 #cd /opt/$TARGET_REPO_NAME
 rm -rf /srv/jekyll/*
 cp -rf /opt/$TARGET_REPO_NAME/. /srv/jekyll
-rm -rf /opt/$TARGET_REPO_NAME/specs/$REPO_NAME/
+rm -rf /opt/$TARGET_REPO_NAME/specs/.
 
 
 cd /srv/jekyll
@@ -108,13 +108,13 @@ if [[ ${RESULT} -ne 0 ]]; then
 	exit
 fi
 
-cp -rf /srv/jekyll/_site/specs/$REPO_NAME/. /opt/$TARGET_REPO_NAME/specs/$REPO_NAME
+cp -rf /srv/jekyll/_site/specs/. /opt/$TARGET_REPO_NAME/specs
 
 cd /opt/$TARGET_REPO_NAME
 
 git add --all
 
-git commit -m "$COMMIT_MESSAGE"
+git commit -m "update specifications pages due to $COMMIT_MESSAGE"
 
 #git reset --hard HEAD
 
