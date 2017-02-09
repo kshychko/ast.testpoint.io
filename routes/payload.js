@@ -18,9 +18,10 @@ router.get('/', function (req, res, next) {
 	exec('sh sh/init.sh', function (err, stdout, stderr) {
                 logger.error(err)
                 logger.log(stdout)
-                logger.error(stderr)
-                res.send('init complete');
+                logger.error(stderr);
             });
+			
+	res.send('init started');
 });
 
 /* GET home page. */
