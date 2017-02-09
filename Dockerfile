@@ -10,11 +10,6 @@ ADD id_rsa /root/.ssh/id_rsa
 
 RUN chmod 700 /root/.ssh/id_rsa
 
-RUN eval $(ssh-agent -s)
-RUN ssh-add /root/.ssh/id_rsa
-RUN ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts
-
-
 ENV APP_HOME /src
 ENV HOME /root
 RUN mkdir /opt
