@@ -19,5 +19,6 @@ cp -rf /opt/ausdigital.github.io/. /srv/jekyll
 cd /srv/jekyll
 BUNDLE_SPECIFIC_PLATFORM=true bundle install
 bundle exec jekyll build
+rm -rf /srv/jekyll/*
 
 echo -e "init complete"
