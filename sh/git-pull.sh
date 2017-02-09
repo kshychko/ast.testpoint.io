@@ -112,7 +112,7 @@ cp -rf /srv/jekyll/_site/specs/$REPO_NAME/* /opt/$TARGET_REPO_NAME/specs/$REPO_N
 
 cd /opt/$TARGET_REPO_NAME
 
-git add specs/$REPO_NAME/*
+git add --all
 
 git commit -m "$COMMIT_MESSAGE"
 
