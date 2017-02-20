@@ -44,7 +44,7 @@ router.post('/', function (req, res, next) {
             + ' -u ' + repoURL
             + ' -a "' + authorName + '"'
             + ' -b ' + authorEmail
-            + ' -c "' + commitMessage.replace("\"", "'") + '"'
+            + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
             + ' -t ' + 'ausdigital.github.io'
             + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git'
             , function (err, stdout, stderr) {
