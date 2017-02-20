@@ -56,7 +56,7 @@ fi
 
 cd /opt/$TARGET_REPO_NAME
 if [ -d "specs" ]; then
-    echo -e "specs directoryexists, no need to create"
+    echo -e "specs directory exists, no need to create"
     else
     mkdir "specs"
 fi
