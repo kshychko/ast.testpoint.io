@@ -97,6 +97,6 @@ router.get('/', function (req, res, next) {
         });
     });
 
-    res.send('init started');
+    res.send('api init started');
 });
 module.exports = router;

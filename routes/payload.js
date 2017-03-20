@@ -5,8 +5,10 @@ var express = require('express');
 var router = express.Router();
 var exec = require('child_process').exec;
 var log4js = require('log4js');
-var $RefParser = require('json-schema-ref-parser');
-var parser = new $RefParser();
+var jsref = require('json-schema-ref-parser');
+var parser = new jsref();
+var fs = require('fs');
+var path = require('path');
 
 log4js.configure({
     appenders: [
@@ -56,13 +58,7 @@ router.post('/', function (req, res, next) {
                 logger.error(stderr)
 
 
-                req.get('http://localhost:3000/api', options, function (err, res, body) {
-                    if (err)
-                        if (res.statusCode !== 200) //etc
-                            logger.error('res.statusCode: ' + res.statusCode);
-                    else
-                            logger.log('res.statusCode: ' + res.statusCode);
-                });
+                processAPI();
 
 
                 res.send('webhook was received');
@@ -71,5 +67,86 @@ router.post('/', function (req, res, next) {
         res.send(eventType + ' was received');
     }
 });
+
+
+function processAPI() {
+    var repoNames = ["ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
+        "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
+    repoNames.forEach(function (repoName) {
+        var baseFrom = "/opt/" + repoName + "/docs/";
+        var copyTo = "/opt/ausdigital.github.io/_data/"
+        fs.readdir(baseFrom, function (err, files) {
+            if (err) {
+                logger.error("Could not list the directory.", err);
+                return;
+            }
+
+            files.forEach(function (version, index) {
+                var baseFromPath = path.join(baseFrom, version);
+                fs.stat(baseFromPath, function (error, stat) {
+                    if (error) {
+                        logger.error("Error stating file.", error);
+                        return;
+                    }
+
+                    if (stat.isFile())
+                        logger.log("'%s' is a file.", baseFromPath);
+                    else if (stat.isDirectory()) {
+                        logger.log("'%s' is a directory.", baseFromPath);
+
+                        var copyFrom = baseFromPath;
+                        fs.readdir(copyFrom, function (err, files) {
+                            if (err) {
+                                logger.error("Could not list the directory.", err);
+                                return;
+                            }
+
+                            files.forEach(function (file, index) {
+
+                                if (file == "swagger.json") {
+                                    // Make one pass and make the file complete
+                                    var fromPath = path.join(copyFrom, file);
+                                    var fileName = repoName + "_" + version.replace(".", "-") + "_" + file;
+                                    logger.log(fileName);
+                                    var toPath = path.join(copyTo, fileName);
+
+                                    fs.stat(fromPath, function (error, stat) {
+                                        if (error) {
+                                            logger.error("Error stating file.", error);
+                                            return;
+                                        }
+
+                                        if (stat.isFile())
+                                            logger.log("'%s' is a file.", fromPath);
+                                        else if (stat.isDirectory())
+                                            logger.log("'%s' is a directory.", fromPath);
+
+                                        var result = JSON.parse(fs.readFileSync(fromPath));
+
+                                        parser.dereference(result, function(err, schema) {
+                                            if (err) {
+                                                logger.error(err);
+                                            }
+                                            else {
+                                                // `schema` is just a normal JavaScript object that contains your entire JSON Schema,
+                                                // including referenced files, combined into a single object
+                                                fs.writeFileSync(toPath, JSON.stringify(schema));
+
+                                            }
+                                        });
+
+                                    });
+                                }
+                            });
+                        });
+                    }
+
+                });
+            });
+
+        });
+    });
+
+}
 
 module.exports = router;
