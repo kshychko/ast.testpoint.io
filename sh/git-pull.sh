@@ -92,22 +92,6 @@ do
 done
 
 
-
-cd /opt/$TARGET_REPO_NAME/
-
-if [ -d "_data" ]; then
-    rm -rf "_data"
-fi
-mkdir "_data"
-cd /opt/$TARGET_REPO_NAME/_data
-
-## now loop through the above array
-for i in "${REPO_NAMES[@]}"
-do
-mcp '/opt/'$i'/*/*/swagger.json' $i'/#1_#2_swagger.json'
-done
-
-
 #cd /opt/$TARGET_REPO_NAME
 rm -rf /srv/jekyll/*
 cp -rf /opt/$TARGET_REPO_NAME/. /srv/jekyll
