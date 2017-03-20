@@ -117,7 +117,7 @@ cp -rf /srv/jekyll/_site/specs/. /opt/$TARGET_REPO_NAME/specs
 
 cd /opt/$TARGET_REPO_NAME
 
-git add --all
+git add /opt/$TARGET_REPO_NAME/specs/*
 
 git commit -m "update specifications pages due to commit \"$COMMIT_MESSAGE\" to \"$REPO_NAME\""
 

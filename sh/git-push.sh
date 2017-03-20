@@ -53,7 +53,7 @@ git config --global user.name "Specification API Generator"
 
 cd /opt/$TARGET_REPO_NAME/_data
 
-git add COMMIT_FILE
+git add /opt/$TARGET_REPO_NAME/_data/*
 
 git commit -m "update specifications api due to commit \"$COMMIT_MESSAGE\" to \"$REPO_NAME\""
 
