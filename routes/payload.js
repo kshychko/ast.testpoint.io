@@ -55,95 +55,11 @@ router.post('/', function (req, res, next) {
                 logger.log(stdout)
                 logger.error(stderr)
 
-                //post processing of API files
-                var repoNames = ["ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
-                    "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
-                repoNames.forEach(function (repo) {
-                    var baseFrom = "/opt/" + repo + "/docs/";
-                    var copyTo = "/opt/ausdigital.github.io/_data/"
-                    fs.readdir(baseFrom, function (err, files) {
-                        if (err) {
-                            logger.error("Could not list the directory.", err);
-                            process.exit(1);
-                        }
 
-                        files.forEach(function (version, index) {
-                            var baseFromPath = path.join(baseFrom, version);
-                            fs.stat(baseFromPath, function (error, stat) {
-                                if (error) {
-                                    logger.error("Error stating file.", error);
-                                    return;
-                                }
-
-                                if (stat.isFile())
-                                    logger.log("'%s' is a file.", baseFromPath);
-                                else if (stat.isDirectory()) {
-                                    logger.log("'%s' is a directory.", baseFromPath);
-
-                                    var copyFrom = baseFromPath;
-                                    fs.readdir(copyFrom, function (err, files) {
-                                        if (err) {
-                                            logger.error("Could not list the directory.", err);
-                                            process.exit(1);
-                                        }
-
-                                        files.forEach(function (file, index) {
-
-                                            if (file == "swagger.json") {
-                                                // Make one pass and make the file complete
-                                                var fromPath = path.join(copyFrom, file);
-                                                var fileName = repo + "_" + version.replace(".", "-") + "_" + file;
-                                                logger.log(fileName);
-                                                var toPath = path.join(copyTo, fileName);
-
-                                                fs.stat(fromPath, function (error, stat) {
-                                                    if (error) {
-                                                        logger.error("Error stating file.", error);
-                                                        return;
-                                                    }
-
-                                                    if (stat.isFile())
-                                                        logger.log("'%s' is a file.", fromPath);
-                                                    else if (stat.isDirectory())
-                                                        logger.log("'%s' is a directory.", fromPath);
-
-                                                    var result = JSON.parse(fs.readFileSync(fromPath));
-
-                                                    parser.dereference(result, function(err, schema) {
-                                                        if (err) {
-                                                            logger.error(err);
-                                                        }
-                                                        else {
-                                                            // `schema` is just a normal JavaScript object that contains your entire JSON Schema,
-                                                            // including referenced files, combined into a single object
-                                                            fs.writeFileSync(toPath, JSON.stringify(schema));
-                                                            exec('bash sh/git-push.sh'
-                                                                + ' -n ' + repo
-                                                                + ' -u ' + repoURL
-                                                                + ' -a "' + authorName + '"'
-                                                                + ' -b ' + authorEmail
-                                                                + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
-                                                                + ' -t ' + 'ausdigital.github.io'
-                                                                + ' -r ' + 'git@github.com:kshychko/ausdigital.github.io.git'
-                                                                + ' -f "' + toPath + '"'
-                                                                , function (err, stdout, stderr) {
-                                                                    logger.error(err)
-                                                                    logger.log(stdout)
-                                                                    logger.error(stderr)
-                                                                });
-                                                        }
-                                                    });
-
-                                                });
-                                            }
-                                        });
-                                    });
-                                }
-
-                            });
-                        });
-
-                    });
+                request.get('http://localhost:3000/api', options, function (err, res, body) {
+                    if (err) //TODO: handle err
+                        if (res.statusCode !== 200) //etc
+                            logger.error('res.statusCode: ' + res.statusCode);
                 });
 
 
