@@ -56,10 +56,12 @@ router.post('/', function (req, res, next) {
                 logger.error(stderr)
 
 
-                request.get('http://localhost:3000/api', options, function (err, res, body) {
-                    if (err) //TODO: handle err
+                req.get('http://localhost:3000/api', options, function (err, res, body) {
+                    if (err)
                         if (res.statusCode !== 200) //etc
                             logger.error('res.statusCode: ' + res.statusCode);
+                    else
+                            logger.log('res.statusCode: ' + res.statusCode);
                 });
 
 
