@@ -10,7 +10,7 @@ var parser = new $RefParser();
 
 log4js.configure({
     appenders: [
-        {type: 'logger'},
+        {type: 'console'},
         {type: 'file', filename: 'app.log', category: 'app'}
     ]
 });
