@@ -58,8 +58,8 @@ router.post('/', function (req, res, next) {
                 //post processing of API files
                 var repoNames = ["ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
                     "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
-                repoNames.forEach(function (repoName) {
-                    var baseFrom = "/opt/" + repoName + "/docs/";
+                repoNames.forEach(function (repo) {
+                    var baseFrom = "/opt/" + repo + "/docs/";
                     var copyTo = "/opt/ausdigital.github.io/_data/"
                     fs.readdir(baseFrom, function (err, files) {
                         if (err) {
@@ -92,7 +92,7 @@ router.post('/', function (req, res, next) {
                                             if (file == "swagger.json") {
                                                 // Make one pass and make the file complete
                                                 var fromPath = path.join(copyFrom, file);
-                                                var fileName = repoName + "_" + version.replace(".", "-") + "_" + file;
+                                                var fileName = repo + "_" + version.replace(".", "-") + "_" + file;
                                                 logger.log(fileName);
                                                 var toPath = path.join(copyTo, fileName);
 
@@ -118,7 +118,7 @@ router.post('/', function (req, res, next) {
                                                             // including referenced files, combined into a single object
                                                             fs.writeFileSync(toPath, JSON.stringify(schema));
                                                             exec('bash sh/git-push.sh'
-                                                                + ' -n ' + repoName
+                                                                + ' -n ' + repo
                                                                 + ' -u ' + repoURL
                                                                 + ' -a "' + authorName + '"'
                                                                 + ' -b ' + authorEmail
