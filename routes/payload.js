@@ -5,29 +5,32 @@ var express = require('express');
 var router = express.Router();
 var exec = require('child_process').exec;
 var log4js = require('log4js');
+var $RefParser = require('json-schema-ref-parser');
+var parser = new $RefParser();
+
 log4js.configure({
     appenders: [
-        { type: 'console' },
-        { type: 'file', filename: 'app.log', category: 'app' }
+        {type: 'console'},
+        {type: 'file', filename: 'app.log', category: 'app'}
     ]
 });
 var logger = log4js.getLogger('app');
 
 
 router.get('/', function (req, res, next) {
-	exec('bash sh/init.sh', function (err, stdout, stderr) {
-                logger.error(err)
-                logger.log(stdout)
-                logger.error(stderr);
-            });
-			
-	res.send('init started');
+    exec('bash sh/init.sh', function (err, stdout, stderr) {
+        logger.error(err)
+        logger.log(stdout)
+        logger.error(stderr);
+    });
+
+    res.send('init started');
 });
 
 /* GET home page. */
 router.post('/', function (req, res, next) {
     var eventType = req.get('X-GitHub-Event');
-    if ( eventType == 'push') {
+    if (eventType == 'push') {
         console.log("Push Received:\n")
         var repoURL = req.body.repository.git_url;
         var repoName = req.body.repository.name;
@@ -51,10 +54,19 @@ router.post('/', function (req, res, next) {
                 logger.error(err)
                 logger.log(stdout)
                 logger.error(stderr)
+
+                //post processing of API files
+                fs.readdir('/opt/ausdigital.github.io/_data/', function(err, items) {
+                    console.log(items);
+
+                    for (var i=0; i<items.length; i++) {
+                        console.log(items[i]);
+                    }
+                });
+
                 res.send('webhook was received');
             });
     } else {
-        console.log("Push Received:\n")
         res.send(eventType + ' was received');
     }
 });
