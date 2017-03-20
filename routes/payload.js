@@ -58,7 +58,7 @@ router.post('/', function (req, res, next) {
                 logger.error(stderr)
 
 
-                processAPI();
+                processAPI(repoURL, authorEmail, authorName, commitMessage);
 
 
                 res.send('webhook was received');
@@ -69,7 +69,7 @@ router.post('/', function (req, res, next) {
 });
 
 
-function processAPI() {
+function processAPI(repoURL, authorEmail, authorName, commitMessage) {
     var repoNames = ["ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
         "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
     repoNames.forEach(function (repoName) {
@@ -131,6 +131,23 @@ function processAPI() {
                                                 // `schema` is just a normal JavaScript object that contains your entire JSON Schema,
                                                 // including referenced files, combined into a single object
                                                 fs.writeFileSync(toPath, JSON.stringify(schema));
+
+                                                exec('bash sh/git-push.sh'
+                                                    + ' -n ' + repoName
+                                                    + ' -u ' + repoURL
+                                                    + ' -a "' + authorName + '"'
+                                                    + ' -f "' + toPath + '"'
+                                                    + ' -b ' + authorEmail
+                                                    + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
+                                                    + ' -t ' + 'ausdigital.github.io'
+                                                    + ' -r ' + 'git@github.com:kshychko/ausdigital.github.io.git'
+                                                    , function (err, stdout, stderr) {
+                                                        logger.error(err)
+                                                        logger.log(stdout)
+                                                        logger.error(stderr)
+
+                                                    });
+
 
                                             }
                                         });
