@@ -10,7 +10,7 @@ var parser = new $RefParser();
 
 log4js.configure({
     appenders: [
-        {type: 'console'},
+        {type: 'logger'},
         {type: 'file', filename: 'app.log', category: 'app'}
     ]
 });
@@ -31,7 +31,7 @@ router.get('/', function (req, res, next) {
 router.post('/', function (req, res, next) {
     var eventType = req.get('X-GitHub-Event');
     if (eventType == 'push') {
-        console.log("Push Received:\n")
+        logger.log("Push Received:\n")
         var repoURL = req.body.repository.git_url;
         var repoName = req.body.repository.name;
         var authorEmail = req.body.head_commit.author.email;
@@ -63,7 +63,7 @@ router.post('/', function (req, res, next) {
                     var copyTo = "/opt/ausdigital.github.io/_data/"
                     fs.readdir(baseFrom, function (err, files) {
                         if (err) {
-                            console.error("Could not list the directory.", err);
+                            logger.error("Could not list the directory.", err);
                             process.exit(1);
                         }
 
@@ -71,19 +71,19 @@ router.post('/', function (req, res, next) {
                             var baseFromPath = path.join(baseFrom, version);
                             fs.stat(baseFromPath, function (error, stat) {
                                 if (error) {
-                                    console.error("Error stating file.", error);
+                                    logger.error("Error stating file.", error);
                                     return;
                                 }
 
                                 if (stat.isFile())
-                                    console.log("'%s' is a file.", baseFromPath);
+                                    logger.log("'%s' is a file.", baseFromPath);
                                 else if (stat.isDirectory()) {
-                                    console.log("'%s' is a directory.", baseFromPath);
+                                    logger.log("'%s' is a directory.", baseFromPath);
 
                                     var copyFrom = baseFromPath;
                                     fs.readdir(copyFrom, function (err, files) {
                                         if (err) {
-                                            console.error("Could not list the directory.", err);
+                                            logger.error("Could not list the directory.", err);
                                             process.exit(1);
                                         }
 
@@ -93,25 +93,25 @@ router.post('/', function (req, res, next) {
                                                 // Make one pass and make the file complete
                                                 var fromPath = path.join(copyFrom, file);
                                                 var fileName = repoName + "_" + version.replace(".", "-") + "_" + file;
-                                                console.log(fileName);
+                                                logger.log(fileName);
                                                 var toPath = path.join(copyTo, fileName);
 
                                                 fs.stat(fromPath, function (error, stat) {
                                                     if (error) {
-                                                        console.error("Error stating file.", error);
+                                                        logger.error("Error stating file.", error);
                                                         return;
                                                     }
 
                                                     if (stat.isFile())
-                                                        console.log("'%s' is a file.", fromPath);
+                                                        logger.log("'%s' is a file.", fromPath);
                                                     else if (stat.isDirectory())
-                                                        console.log("'%s' is a directory.", fromPath);
+                                                        logger.log("'%s' is a directory.", fromPath);
 
                                                     var result = JSON.parse(fs.readFileSync(fromPath));
 
                                                     parser.dereference(result, function(err, schema) {
                                                         if (err) {
-                                                            console.error(err);
+                                                            logger.error(err);
                                                         }
                                                         else {
                                                             // `schema` is just a normal JavaScript object that contains your entire JSON Schema,
