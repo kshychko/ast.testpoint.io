@@ -50,14 +50,16 @@ router.post('/', function (req, res, next) {
         var pull = execSync('bash sh/git-pull.sh'
             + ' -t ' + 'ausdigital.github.io');
 
+        logger.error("Swagger api processing starting.", "Swagger api processing starting.");
+
         processAPI();
 
-        logger.error("Swagger api processing finished. Starting Jekyll build");
+        logger.error("Swagger api processing finished. Starting Jekyll build", "Swagger api processing finished. Starting Jekyll build");
 
         execSync('bash sh/jekyll-build.sh'
             + ' -t ' + 'ausdigital.github.io');
 
-        logger.error("Jekyll build is finished. Commit and push changes.")
+        logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.")
         execSync('bash sh/git-push.sh'
             + ' -n ' + repoName
             + ' -u ' + repoURL
