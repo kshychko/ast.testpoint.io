@@ -49,19 +49,17 @@ router.post('/', function (req, res, next) {
 
         gitPull();
         /*execSync('bash sh/jekyll-build.sh'
-            + ' -t ' + 'ausdigital.github.io');
+         + ' -t ' + 'ausdigital.github.io');
 
-        logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.")
-        execSync('bash sh/git-push.sh'
-            + ' -n ' + repoName
-            + ' -u ' + repoURL
-            + ' -a "' + authorName + '"'
-            + ' -b ' + authorEmail
-            + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
-            + ' -t ' + 'ausdigital.github.io'
-            + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git');*/
-
-
+         logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.")
+         execSync('bash sh/git-push.sh'
+         + ' -n ' + repoName
+         + ' -u ' + repoURL
+         + ' -a "' + authorName + '"'
+         + ' -b ' + authorEmail
+         + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
+         + ' -t ' + 'ausdigital.github.io'
+         + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git');*/
 
 
     } else {
@@ -78,13 +76,14 @@ function gitPull() {
     for (var i = 0; i < repoNames.length; i++) {
         var repoName = repoNames[i];
         require('simple-git')('/opt' + '/' + repoName)
-            .then(function() {
-                console.log('Starting pull... ' + repoName);
-            }).pull(function (err, update) {
+            .then(function () {
+                logger.error('Starting pull... ' + repoName);
+            })
+            .pull(function (err, update) {
                 logger.error('repoName ' + repoName + ' was updated')
-            }.then(function() {
-                console.log(repoName + ' pull done.');
-            }));
+            }).then(function () {
+                logger.error(repoName + ' pull done.');
+            });
 
     }
 }
