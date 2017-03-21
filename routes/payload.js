@@ -52,8 +52,6 @@ router.post('/', function (req, res, next) {
 
         logger.error("Swagger api processing starting.", "Swagger api processing starting.");
 
-        processAPI();
-
         logger.error("Swagger api processing finished. Starting Jekyll build", "Swagger api processing finished. Starting Jekyll build");
 
         execSync('bash sh/jekyll-build.sh'
