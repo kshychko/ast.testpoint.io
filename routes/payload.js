@@ -47,21 +47,7 @@ router.post('/', function (req, res, next) {
 
         res.send('webhook was received');
 
-        exec('bash sh/git-pull.sh'
-            + ' -t ' + 'ausdigital.github.io', function (err, stdout, stderr) {
-            /*logger.error(err)
-            logger.error(stdout)
-            logger.error(stderr);
-*/
-            logger.error("Swagger api processing starting.", "Swagger api processing starting.");
-
-            processAPI();
-
-            logger.error("Swagger api processing finished. Starting Jekyll build", "Swagger api processing finished. Starting Jekyll build");
-
-
-        });
-
+        gitPull();
         /*execSync('bash sh/jekyll-build.sh'
             + ' -t ' + 'ausdigital.github.io');
 
@@ -83,7 +69,21 @@ router.post('/', function (req, res, next) {
     }
 });
 
+function gitPull() {
 
+
+    var repoNames = ["ausdigital.github.io", "ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
+        "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
+
+    for (var i = 0; i < repoNames.length; i++) {
+        var repoName = repoNames[i];
+        require('simple-git')('/opt' + '/' + repoName)
+            .pull(function (err, update) {
+                logger.error('repoName ' + repoName + ' was updated')
+            });
+
+    }
+}
 function processAPI() {
     var repoNames = ["ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
         "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
