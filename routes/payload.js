@@ -47,7 +47,7 @@ router.post('/', function (req, res, next) {
 
         res.send('webhook was received');
 
-        gitPull();
+        gitPullNextRepo(0);
         /*execSync('bash sh/jekyll-build.sh'
          + ' -t ' + 'ausdigital.github.io');
 
@@ -67,25 +67,26 @@ router.post('/', function (req, res, next) {
     }
 });
 
-function gitPull() {
+var repoNames = ["ausdigital.github.io", "ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
+    "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
 
+function gitPullNextRepo(index) {
 
-    var repoNames = ["ausdigital.github.io", "ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
-        "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
+    var repoName = repoNames[index];
 
-    for (var i = 0; i < repoNames.length; i++) {
-        var repoName = repoNames[i];
-        require('simple-git')('/opt' + '/' + repoName)
-            .then(function () {
-                logger.error('Starting pull... ' + repoName);
-            })
-            .pull(function (err, update) {
-                logger.error('repoName ' + repoName + ' was updated')
-            }).then(function () {
-                logger.error(repoName + ' pull done.');
-            });
+    require('simple-git')('/opt' + '/' + repoName)
+        .then(function () {
+            logger.error('Starting pull... ' + repoName);
+        })
+        .pull(function (err, update) {
+            logger.error('repoName ' + repoName + ' was updated')
+        }).then(function () {
+        logger.error(repoName + ' pull done.');
+        if (index + 1 < repoNames.length) {
+            gitPullNextRepo(index + 1)
+        }
+    });
 
-    }
 }
 function processAPI() {
     var repoNames = ["ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
