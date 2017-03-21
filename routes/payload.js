@@ -78,9 +78,13 @@ function gitPull() {
     for (var i = 0; i < repoNames.length; i++) {
         var repoName = repoNames[i];
         require('simple-git')('/opt' + '/' + repoName)
-            .pull(function (err, update) {
+            .then(function() {
+                console.log('Starting pull... ' + repoName);
+            }).pull(function (err, update) {
                 logger.error('repoName ' + repoName + ' was updated')
-            });
+            }.then(function() {
+                console.log(repoName + ' pull done.');
+            }));
 
     }
 }
