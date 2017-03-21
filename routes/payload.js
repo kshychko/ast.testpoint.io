@@ -22,7 +22,7 @@ var logger = log4js.getLogger('app');
 router.get('/', function (req, res, next) {
     exec('bash sh/init.sh', function (err, stdout, stderr) {
         logger.error(err)
-        logger.log(stdout)
+        logger.error(stdout)
         logger.error(stderr);
     });
 
@@ -33,17 +33,17 @@ router.get('/', function (req, res, next) {
 router.post('/', function (req, res, next) {
     var eventType = req.get('X-GitHub-Event');
     if (eventType == 'push') {
-        logger.log("Push Received:\n")
+        logger.error("Push Received:\n")
         var repoURL = req.body.repository.git_url;
         var repoName = req.body.repository.name;
         var authorEmail = req.body.head_commit.author.email;
         var authorName = req.body.head_commit.author.name;
         var commitMessage = req.body.head_commit.message;
-        logger.log("repoURL - ", repoURL);
-        logger.log("repoName - ", repoName);
-        logger.log("authorEmail - ", authorEmail);
-        logger.log("authorName - ", authorName);
-        logger.log("commitMessage - ", commitMessage);
+        logger.error("repoURL - ", repoURL);
+        logger.error("repoName - ", repoName);
+        logger.error("authorEmail - ", authorEmail);
+        logger.error("authorName - ", authorName);
+        logger.error("commitMessage - ", commitMessage);
 
         res.send('webhook was received');
 
@@ -52,12 +52,12 @@ router.post('/', function (req, res, next) {
 
         processAPI();
 
-        logger.log("Swagger api processing finished. Starting Jekyll build");
+        logger.error("Swagger api processing finished. Starting Jekyll build");
 
         execSync('bash sh/jekyll-build.sh'
             + ' -t ' + 'ausdigital.github.io');
 
-        logger.log("Jekyll build is finished. Commit and push changes.")
+        logger.error("Jekyll build is finished. Commit and push changes.")
         execSync('bash sh/git-push.sh'
             + ' -n ' + repoName
             + ' -u ' + repoURL
@@ -91,9 +91,9 @@ function processAPI() {
             var stat = fs.stat(baseFromPath)
 
             if (stat.isFile())
-                logger.log("'%s' is a file.", baseFromPath);
+                logger.error("'%s' is a file.", baseFromPath);
             else if (stat.isDirectory()) {
-                logger.log("'%s' is a directory.", baseFromPath);
+                logger.error("'%s' is a directory.", baseFromPath);
 
                 var copyFrom = baseFromPath;
                 var files = fs.readdirSync(copyFrom);
@@ -104,14 +104,14 @@ function processAPI() {
                         // Make one pass and make the file complete
                         var fromPath = path.join(copyFrom, file);
                         var fileName = repoName + "_" + version.replace(".", "-") + "_" + file;
-                        logger.log(fileName);
+                        logger.error(fileName);
                         var toPath = path.join(copyTo, fileName);
 
                         var stat = fs.statSync(fromPath);
                         if (stat.isFile())
-                            logger.log("'%s' is a file.", fromPath);
+                            logger.error("'%s' is a file.", fromPath);
                         else if (stat.isDirectory())
-                            logger.log("'%s' is a directory.", fromPath);
+                            logger.error("'%s' is a directory.", fromPath);
 
                         var result = JSON.parse(fs.readFileSync(fromPath));
 
