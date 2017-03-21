@@ -49,10 +49,10 @@ router.post('/', function (req, res, next) {
 
         exec('bash sh/git-pull.sh'
             + ' -t ' + 'ausdigital.github.io', function (err, stdout, stderr) {
-            logger.error(err)
+            /*logger.error(err)
             logger.error(stdout)
             logger.error(stderr);
-
+*/
             logger.error("Swagger api processing starting.", "Swagger api processing starting.");
 
             processAPI();
