@@ -47,14 +47,22 @@ router.post('/', function (req, res, next) {
 
         res.send('webhook was received');
 
-        var pull = execSync('bash sh/git-pull.sh'
-            + ' -t ' + 'ausdigital.github.io');
+        exec('bash sh/git-pull.sh'
+            + ' -t ' + 'ausdigital.github.io', function (err, stdout, stderr) {
+            logger.error(err)
+            logger.error(stdout)
+            logger.error(stderr);
 
-        logger.error("Swagger api processing starting.", "Swagger api processing starting.");
+            logger.error("Swagger api processing starting.", "Swagger api processing starting.");
 
-        logger.error("Swagger api processing finished. Starting Jekyll build", "Swagger api processing finished. Starting Jekyll build");
+            processAPI();
 
-        execSync('bash sh/jekyll-build.sh'
+            logger.error("Swagger api processing finished. Starting Jekyll build", "Swagger api processing finished. Starting Jekyll build");
+
+
+        });
+
+        /*execSync('bash sh/jekyll-build.sh'
             + ' -t ' + 'ausdigital.github.io');
 
         logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.")
@@ -65,7 +73,7 @@ router.post('/', function (req, res, next) {
             + ' -b ' + authorEmail
             + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
             + ' -t ' + 'ausdigital.github.io'
-            + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git');
+            + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git');*/
 
 
 
