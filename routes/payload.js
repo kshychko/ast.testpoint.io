@@ -8,6 +8,7 @@ var log4js = require('log4js');
 var deref = require('json-schema-deref-sync');
 var fs = require('fs');
 var path = require('path');
+var execSync = require('exec-sync');
 
 log4js.configure({
     appenders: [
@@ -44,47 +45,30 @@ router.post('/', function (req, res, next) {
         logger.log("authorName - ", authorName);
         logger.log("commitMessage - ", commitMessage);
 
-        exec('bash sh/git-pull.sh'
-            + ' -t ' + 'ausdigital.github.io'
-            , function (err, stdout, stderr) {
-                logger.error(err)
-                logger.log(stdout)
-                logger.error(stderr)
-
-                logger.log("Git pull finished. Starting swagger api processing.")
-                processAPI();
-
-                logger.log("Swagger api processing finished. Starting Jekyll build")
-
-                exec('bash sh/jekyll-build.sh'
-                    + ' -t ' + 'ausdigital.github.io'
-                    , function (err, stdout, stderr) {
-                        logger.error(err)
-                        logger.log(stdout)
-                        logger.error(stderr)
-
-                        logger.log("Jekyll build is finished. Commit and push changes.")
-                        exec('bash sh/git-push.sh'
-                            + ' -n ' + repoName
-                            + ' -u ' + repoURL
-                            + ' -a "' + authorName + '"'
-                            + ' -b ' + authorEmail
-                            + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
-                            + ' -t ' + 'ausdigital.github.io'
-                            + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git'
-                            , function (err, stdout, stderr) {
-                                logger.error(err)
-                                logger.log(stdout)
-                                logger.error(stderr)
-
-                            });
-                    });
-
-
-            });
-
-
         res.send('webhook was received');
+
+        var pull = execSync('bash sh/git-pull.sh'
+            + ' -t ' + 'ausdigital.github.io');
+
+        logger.log("Git pull finished. Starting swagger api processing.");
+        processAPI();
+
+        logger.log("Swagger api processing finished. Starting Jekyll build");
+
+        execSync('bash sh/jekyll-build.sh'
+            + ' -t ' + 'ausdigital.github.io');
+
+        logger.log("Jekyll build is finished. Commit and push changes.")
+        execSync('bash sh/git-push.sh'
+            + ' -n ' + repoName
+            + ' -u ' + repoURL
+            + ' -a "' + authorName + '"'
+            + ' -b ' + authorEmail
+            + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
+            + ' -t ' + 'ausdigital.github.io'
+            + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git');
+
+
 
 
     } else {
