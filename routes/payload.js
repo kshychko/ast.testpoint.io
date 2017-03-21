@@ -7,6 +7,7 @@ var exec = require('child_process').exec;
 var log4js = require('log4js');
 var deref = require('json-schema-deref-sync');
 var fs = require('fs');
+var fse = require('fs-extra')
 var path = require('path');
 var execSync = require('sync-exec');
 
@@ -20,12 +21,8 @@ var logger = log4js.getLogger('app');
 
 
 router.get('/', function (req, res, next) {
-    exec('bash sh/init.sh', function (err, stdout, stderr) {
-        logger.error(err)
-        logger.error(stdout)
-        logger.error(stderr);
-    });
 
+    gitPullNextRepo(0)
     res.send('init started');
 });
 
@@ -70,11 +67,12 @@ router.post('/', function (req, res, next) {
 var repoNames = ["ausdigital.github.io", "ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
     "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
 
+var baseDir = '/opt/'
 function gitPullNextRepo(index) {
 
     var repoName = repoNames[index];
 
-    require('simple-git')('/opt' + '/' + repoName)
+    require('simple-git')(baseDir + repoName)
         .then(function () {
             logger.error('Starting pull... ' + repoName);
         })
@@ -84,23 +82,58 @@ function gitPullNextRepo(index) {
         logger.error(repoName + ' pull done.');
         if (index + 1 < repoNames.length) {
             gitPullNextRepo(index + 1)
+        } else {
+            cleanUpSpecs(1);
         }
     });
+}
 
+function cleanUpSpecs(index) {
+
+    var repoName = repoNames[index];
+
+    logger.error('about to delete ' + baseDir + repoNames[0] + '/specs/' + repoName)
+    fse.emptyDirSync(baseDir + repoNames[0] + '/specs/' + repoName);
+
+    if (index + 1 < repoNames.length) {
+        cleanUpSpecs(index + 1)
+    } else {
+        //copy from docs
+        copyFromDocs(1);
+    }
+}
+
+function copyFromDocs(index) {
+    var repoName = repoNames[index];
+
+    logger.error('about to copy ' + baseDir + repoNames[0] + '/specs/' + repoName)
+    fse.copySync(baseDir + repoName + '/docs',
+        baseDir + repoNames[0] + '/specs/' + repoName);
+
+    if (index + 1 < repoNames.length) {
+        copyFromDocs(index + 1)
+    } else {
+        //processAPI
+
+        processAPI();
+
+        execSync('bash sh/jekyll-build.sh'
+            + ' -t ' + 'ausdigital.github.io');
+
+        logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.");
+    }
 }
 function processAPI() {
-    var repoNames = ["ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
-        "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
-
-    for (var i = 0; i < repoNames.length; i++) {
+    for (var i = 1; i < repoNames.length; i++) {
         var repoName = repoNames[i];
-        var baseFrom = "/opt/" + repoName + "/docs/";
-        var copyTo = "/opt/ausdigital.github.io/_data/"
+        var baseFrom = baseDir + repoName + '/docs/';
+        logger.error(baseFrom)
+        var copyTo = baseDir+'ausdigital.github.io/_data/'
         var docs = fs.readdirSync(baseFrom);
         for (var j = 0; j < docs.length; j++) {
             var version = docs[j];
             var baseFromPath = path.join(baseFrom, version);
-            var stat = fs.stat(baseFromPath)
+            var stat = fs.statSync(baseFromPath)
 
             if (stat.isFile())
                 logger.error("'%s' is a file.", baseFromPath);
@@ -131,6 +164,7 @@ function processAPI() {
 
                         // `schema` is just a normal JavaScript object that contains your entire JSON Schema,
                         // including referenced files, combined into a single object
+                        logger.error(fromPath + ' was derefed')
                         fs.writeFileSync(toPath, JSON.stringify(schema));
                     }
                 }

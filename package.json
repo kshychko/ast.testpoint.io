@@ -16,6 +16,7 @@
     "log4js": "~1.1.0",
     "json-schema-deref-sync": "~0.3.3",
     "json-schema-ref-parser": "~3.1.2",
+    "fs-extra": "~2.1.2",
     "simple-git": "~1.67.0",
     "sync-exec": "~0.6.2"
   }
