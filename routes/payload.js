@@ -8,7 +8,7 @@ var log4js = require('log4js');
 var deref = require('json-schema-deref-sync');
 var fs = require('fs');
 var path = require('path');
-var execSync = require('exec-sync');
+var execSync = require('sync-exec');
 
 log4js.configure({
     appenders: [
