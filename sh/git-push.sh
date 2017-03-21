@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Parse options
-while getopts ":n:m:u:t:r:a:b:c:f:" opt; do
+while getopts ":n:m:u:t:r:a:b:c:" opt; do
     case $opt in
         n)
             echo -e "\nREPO_NAME: -${OPTARG}"
@@ -31,10 +31,6 @@ while getopts ":n:m:u:t:r:a:b:c:f:" opt; do
             echo -e "\nCOMMIT_MESSAGE: -${OPTARG}"
             COMMIT_MESSAGE="${OPTARG}"
             ;;
-        f)
-            echo -e "\nCOMMIT_FILE: -${OPTARG}"
-            COMMIT_FILE="${OPTARG}"
-            ;;
         \?)
             echo -e "\nInvalid option: -${OPTARG}"
             usage
@@ -49,16 +45,15 @@ done
 
 git config --global user.email "specs.generator@ausdigital.org"
 
-git config --global user.name "Specification API Generator"
+git config --global user.name "Specification Generator"
 
-cd /opt/$TARGET_REPO_NAME/_data
+git add /opt/$TARGET_REPO_NAME/specs/*
 
-git add /opt/$TARGET_REPO_NAME/_data/*
+git commit -m "update specifications pages due to commit \"$COMMIT_MESSAGE\" to \"$REPO_NAME\""
 
-git commit -m "update specifications api due to commit \"$COMMIT_MESSAGE\" to \"$REPO_NAME\""
-
-#git reset --hard HEAD
+git reset --hard HEAD
 
 git pull --rebase
 
 git push origin master
+

@@ -43,32 +43,57 @@ router.post('/', function (req, res, next) {
         logger.log("authorEmail - ", authorEmail);
         logger.log("authorName - ", authorName);
         logger.log("commitMessage - ", commitMessage);
+
         exec('bash sh/git-pull.sh'
-            + ' -n ' + repoName
-            + ' -u ' + repoURL
-            + ' -a "' + authorName + '"'
-            + ' -b ' + authorEmail
-            + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
             + ' -t ' + 'ausdigital.github.io'
-            + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git'
             , function (err, stdout, stderr) {
                 logger.error(err)
                 logger.log(stdout)
                 logger.error(stderr)
 
+                logger.log("Git pull finished. Starting swagger api processing.")
+                processAPI();
 
-                processAPI(repoURL, authorEmail, authorName, commitMessage);
+                logger.log("Swagger api processing finished. Starting Jekyll build")
+
+                exec('bash sh/jekyll-build.sh'
+                    + ' -t ' + 'ausdigital.github.io'
+                    , function (err, stdout, stderr) {
+                        logger.error(err)
+                        logger.log(stdout)
+                        logger.error(stderr)
+
+                        logger.log("Jekyll build is finished. Commit and push changes.")
+                        exec('bash sh/git-push.sh'
+                            + ' -n ' + repoName
+                            + ' -u ' + repoURL
+                            + ' -a "' + authorName + '"'
+                            + ' -b ' + authorEmail
+                            + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
+                            + ' -t ' + 'ausdigital.github.io'
+                            + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git'
+                            , function (err, stdout, stderr) {
+                                logger.error(err)
+                                logger.log(stdout)
+                                logger.error(stderr)
+
+                            });
+                    });
 
 
-                res.send('webhook was received');
             });
+
+
+        res.send('webhook was received');
+
+
     } else {
         res.send(eventType + ' was received');
     }
 });
 
 
-function processAPI(repoURL, authorEmail, authorName, commitMessage) {
+function processAPI() {
     var repoNames = ["ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
         "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
 
@@ -117,23 +142,6 @@ function processAPI(repoURL, authorEmail, authorName, commitMessage) {
             }
         }
     }
-
-    exec('bash sh/git-push.sh'
-        + ' -n ' + repoName
-        + ' -u ' + repoURL
-        + ' -a "' + authorName + '"'
-        + ' -b ' + authorEmail
-        + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
-        + ' -t ' + 'ausdigital.github.io'
-        + ' -r ' + 'git@github.com:kshychko/ausdigital.github.io.git'
-        , function (err, stdout, stderr) {
-            logger.error(err)
-            logger.log(stdout)
-            logger.error(stderr)
-
-        });
-
-
 }
 
 module.exports = router;

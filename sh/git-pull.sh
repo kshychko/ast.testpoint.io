@@ -1,35 +1,11 @@
 #!/bin/bash
 
 # Parse options
-while getopts ":n:m:u:t:r:a:b:c:" opt; do
+while getopts ":t:" opt; do
     case $opt in
-        n)
-            echo -e "\nREPO_NAME: -${OPTARG}"
-            REPO_NAME="${OPTARG}"
-            ;;
-        u)
-            echo -e "\nREPO_URL: -${OPTARG}"
-            REPO_URL="${OPTARG}"
-            ;;
         t)
             echo -e "\nTARGET_REPO_NAME: -${OPTARG}"
             TARGET_REPO_NAME="${OPTARG}"
-            ;;
-        r)
-            echo -e "\nTARGET_REPO_URL: -${OPTARG}"
-            TARGET_REPO_URL="${OPTARG}"
-            ;;
-        a)
-            echo -e "\nCOMMIT_AUTHOR_NAME: -${OPTARG}"
-            COMMIT_AUTHOR_NAME="${OPTARG}"
-            ;;
-        b)
-            echo -e "\nCOMMIT_AUTHOR_EMAIL: -${OPTARG}"
-            COMMIT_AUTHOR_EMAIL="${OPTARG}"
-            ;;
-        c)
-            echo -e "\nCOMMIT_MESSAGE: -${OPTARG}"
-            COMMIT_MESSAGE="${OPTARG}"
             ;;
         \?)
             echo -e "\nInvalid option: -${OPTARG}"
@@ -42,17 +18,6 @@ while getopts ":n:m:u:t:r:a:b:c:" opt; do
      esac
 done
 
-
-git config --global user.email "specs.generator@ausdigital.org"
-
-git config --global user.name "Specification Generator"
-
-cd /opt
-if [ -d "$TARGET_REPO_NAME" ]; then
-    echo -e "${TARGET_REPO_NAME} exists, no need to clone"
-    else
-    git clone $TARGET_REPO_URL
-fi
 
 cd /opt/$TARGET_REPO_NAME
 if [ -d "specs" ]; then
@@ -92,37 +57,3 @@ do
 done
 
 
-#cd /opt/$TARGET_REPO_NAME
-rm -rf /srv/jekyll/*
-cp -rf /opt/$TARGET_REPO_NAME/. /srv/jekyll
-rm -rf /opt/$TARGET_REPO_NAME/specs/*
-
-
-cd /srv/jekyll
-BUNDLE_SPECIFIC_PLATFORM=true bundle install
-RESULT=$?
-if [[ ${RESULT} -ne 0 ]]; then
-	echo -e "\nCan't bundle install"
-	exit
-fi
-
-bundle exec jekyll build
-RESULT=$?
-if [[ ${RESULT} -ne 0 ]]; then
-	echo -e "\nCan't bundle exec jekyll build"
-	exit
-fi
-
-cp -rf /srv/jekyll/_site/specs/. /opt/$TARGET_REPO_NAME/specs
-
-cd /opt/$TARGET_REPO_NAME
-
-git add /opt/$TARGET_REPO_NAME/specs/*
-
-git commit -m "update specifications pages due to commit \"$COMMIT_MESSAGE\" to \"$REPO_NAME\""
-
-#git reset --hard HEAD
-
-git pull --rebase
-
-git push origin master
