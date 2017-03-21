@@ -50,7 +50,6 @@ router.post('/', function (req, res, next) {
         var pull = execSync('bash sh/git-pull.sh'
             + ' -t ' + 'ausdigital.github.io');
 
-        logger.log("Git pull finished. Starting swagger api processing.");
         processAPI();
 
         logger.log("Swagger api processing finished. Starting Jekyll build");
