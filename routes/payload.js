@@ -5,14 +5,10 @@ var express = require('express');
 var router = express.Router();
 var exec = require('child_process').exec;
 var log4js = require('log4js');
-var deref = require('json-schema-deref-sync');
-var SwaggerParser = require('json-schema-ref-parser');
-var parser = new SwaggerParser();
 var fs = require('fs');
 var fse = require('fs-extra')
 var path = require('path');
 var execSync = require('sync-exec');
-var Sync = require('sync');
 
 log4js.configure({
     appenders: [
