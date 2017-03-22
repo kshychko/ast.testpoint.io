@@ -106,9 +106,9 @@ function copyFromDocs(index) {
 
         processAPI();
 
-        /*execSync('bash sh/jekyll-build.sh'
+        execSync('bash sh/jekyll-build.sh'
             + ' -t ' + 'ausdigital.github.io');
-*/
+
         logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.");
 
         require('simple-git')(baseDir + repoNames[0])
