@@ -41,7 +41,7 @@ router.post('/', function (req, res, next) {
 
         res.send('webhook was received');
 
-        gitPullNextRepo(0, req);
+        gitPullNextRepo(0);
         /**/
 
 
@@ -57,7 +57,7 @@ var baseDir = '/opt/'
 /*
 var baseDir = 'd://work/aus-tp-github/'
 */
-function gitPullNextRepo(index, req) {
+function gitPullNextRepo(index) {
 
     var repoName = repoNames[index];
 
@@ -70,14 +70,14 @@ function gitPullNextRepo(index, req) {
         }).then(function () {
         logger.error(repoName + ' pull done.');
         if (index + 1 < repoNames.length) {
-            gitPullNextRepo(index + 1, req)
+            gitPullNextRepo(index + 1)
         } else {
-            cleanUpSpecs(1, req);
+            cleanUpSpecs(1);
         }
     });
 }
 
-function cleanUpSpecs(index, req) {
+function cleanUpSpecs(index) {
 
     var repoName = repoNames[index];
 
@@ -85,14 +85,14 @@ function cleanUpSpecs(index, req) {
     fse.emptyDirSync(baseDir + repoNames[0] + '/specs/' + repoName);
 
     if (index + 1 < repoNames.length) {
-        cleanUpSpecs(index + 1, req)
+        cleanUpSpecs(index + 1)
     } else {
         //copy from docs
-        copyFromDocs(1, req);
+        copyFromDocs(1);
     }
 }
 
-function copyFromDocs(index, req) {
+function copyFromDocs(index) {
     var repoName = repoNames[index];
 
     logger.error('about to copy ' + baseDir + repoNames[0] + '/specs/' + repoName)
@@ -100,48 +100,28 @@ function copyFromDocs(index, req) {
         baseDir + repoNames[0] + '/specs/' + repoName);
 
     if (index + 1 < repoNames.length) {
-        copyFromDocs(index + 1, req)
+        copyFromDocs(index + 1)
     } else {
         //processAPI
 
         processAPI();
 
-        execSync('bash sh/jekyll-build.sh'
+        /*execSync('bash sh/jekyll-build.sh'
             + ' -t ' + 'ausdigital.github.io');
-
+*/
         logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.");
 
-        var repoURL = req.body.repository.git_url;
-        var repoName = req.body.repository.name;
-        var authorEmail = req.body.head_commit.author.email;
-        var authorName = req.body.head_commit.author.name;
-        var commitMessage = req.body.head_commit.message;
-        logger.error("repoURL - ", repoURL);
-        logger.error("repoName - ", repoName);
-        logger.error("authorEmail - ", authorEmail);
-        logger.error("authorName - ", authorName);
-        logger.error("commitMessage - ", commitMessage);
-
-        require('simple-git')(baseDir + repoName)
+        require('simple-git')(baseDir + repoNames[0])
             .then(function () {
                 logger.error('Starting push... ' + repoNames[0]);
             })
             .addConfig('user.name', 'Specification Generator')
             .addConfig('user.email', 'specs.generator@ausdigital.org')
-            .add(baseDir+repoNames[0]+'specs/*')
+            .add(baseDir+repoNames[0]+'/specs/*')
             .commit("update specifications pages")
             .push(['-u', 'origin', 'master'], function () {
                 // done.
             });
-
-        execSync('bash sh/git-push.sh'
-            + ' -n ' + repoName
-            + ' -u ' + repoURL
-            + ' -a "' + authorName + '"'
-            + ' -b ' + authorEmail
-            + ' -c "' + commitMessage.replace(/"/g, '\'') + '"'
-            + ' -t ' + 'ausdigital.github.io'
-            + ' -r ' + 'git@github.com:ausdigital/ausdigital.github.io.git');
     }
 }
 function processAPI() {
