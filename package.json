@@ -18,6 +18,9 @@
     "json-schema-ref-parser": "~3.1.2",
     "fs-extra": "~2.1.2",
     "simple-git": "~1.67.0",
-    "sync-exec": "~0.6.2"
+    "swagger-parser": "~3.4.1",
+    "deref": "~0.7.0",
+    "sync-exec": "~0.6.2",
+    "sync": "~0.2.5"
   }
 }
