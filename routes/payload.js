@@ -122,6 +122,18 @@ function copyFromDocs(index, req) {
         logger.error("authorName - ", authorName);
         logger.error("commitMessage - ", commitMessage);
 
+        require('simple-git')(baseDir + repoName)
+            .then(function () {
+                logger.error('Starting push... ' + repoNames[0]);
+            })
+            .addConfig('user.name', 'Specification Generator')
+            .addConfig('user.email', 'specs.generator@ausdigital.org')
+            .add(baseDir+repoNames[0]+'specs/*')
+            .commit("update specifications pages")
+            .push(['-u', 'origin', 'master'], function () {
+                // done.
+            });
+
         execSync('bash sh/git-push.sh'
             + ' -n ' + repoName
             + ' -u ' + repoURL
