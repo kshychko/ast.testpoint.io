@@ -50,8 +50,8 @@ router.post('/', function (req, res, next) {
     }
 });
 
-var repoNames = ["ausdigital.github.io", /*"ausdigital-bill", "ausdigital-dcl", */"ausdigital-dcp"/*, "ausdigital-idp", "ausdigital-nry",
-    "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"*/];
+var repoNames = ["ausdigital.github.io", "ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
+    "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
 
 var baseDir = '/opt/'
 /*
