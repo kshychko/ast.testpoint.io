@@ -124,7 +124,7 @@ function copyFromDocs(index) {
 
         logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.");
 
-        /*require('simple-git')(baseDir + repoNames[0])
+        require('simple-git')(baseDir + repoNames[0])
             .then(function () {
                 logger.error('Starting push... ' + repoNames[0]);
             })
@@ -134,7 +134,7 @@ function copyFromDocs(index) {
             .commit("update specifications pages")
             .push(['-u', 'origin', 'master'], function () {
                 logger.error("Push is done.")
-            });*/
+            });
     }
 }
 
