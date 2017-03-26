@@ -34,8 +34,12 @@ router.get('/', function (req, res, next) {
         logger.error(stderr);
     });
 
-    /*gitPullNextRepo(0);*/
     res.send('init started');
+});
+
+router.get('/trigger', function (req, res, next) {
+    gitPullNextRepo(0);
+    res.send('update and validation started');
 });
 
 /* GET home page. */
@@ -120,17 +124,17 @@ function copyFromDocs(index) {
 
         logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.");
 
-        require('simple-git')(baseDir + repoNames[0])
+        /*require('simple-git')(baseDir + repoNames[0])
             .then(function () {
                 logger.error('Starting push... ' + repoNames[0]);
             })
             .addConfig('user.name', 'Specification Generator')
             .addConfig('user.email', 'specs.generator@ausdigital.org')
-            .add(baseDir + repoNames[0] + '/specs/*')
+            .add(baseDir + repoNames[0] + '/specs/!*')
             .commit("update specifications pages")
             .push(['-u', 'origin', 'master'], function () {
                 logger.error("Push is done.")
-            });
+            });*/
     }
 }
 
@@ -169,79 +173,82 @@ function processAPI() {
                         else if (stat.isDirectory())
                             logger.error("'%s' is a directory.", fromPath);
 
-                        var result = JSON.parse(fs.readFileSync(fromPath));
+                        var document = JSON.parse(fs.readFileSync(fromPath));
 
                         logger.error("validating " + fromPath);
 
-                        spec.validate(result, function (err, result) {
-                            if (err) {
-                                throw err;
-                            }
+                        spec.validate(document, (function (repo) {
+                            return function (err, result) {
 
-                            if (typeof result !== 'undefined') {
-                                var splitPath = fromPath.split(path.sep);
-                                var url = 'https://github.com/ausdigital/' + repoName + '/blob/master/docs/' + splitPath[splitPath.length - 2] + '/swagger.json';
-                                var message = {
-                                    channel: "#api-monitoring",
-                                    username: "swagger",
-                                    text: repoName + ": Swagger document is not valid: <" + url + "|swagger.json>",
-                                    attachments: []
-                                };
-                                if (result.errors.length > 0) {
-                                    var fields = [];
-                                    for (var i = 0; i < result.errors.length; i++) {
-                                        logger.error(result.errors[i]);
-                                        var err = result.errors[i];
-                                        fields.push({
-                                            "title": "#/" + err.path.join('/'),
-                                            "value": err.message,
-                                            "short": false
-                                        });
-                                    }
-                                    var attachments = [
-                                        {
-                                            "fallback": "Swagger document is not valid",
-                                            "pretext": "Errors:",
-                                            "color": "danger",
-                                            "fields": fields
-                                        }
-                                    ]
-                                    message.attachments = attachments;
-
-                                    slack.send(message, function (err, response) {
-                                        console.log(response);
-                                    });
-                                }
-                                if (result.warnings.length > 0) {
-                                    var fields = [];
-                                    for (var i = 0; i < result.warnings.length; i++) {
-                                        logger.error(result.warnings[i]);
-                                        var warn = result.warnings[i];
-                                        fields.push({
-                                            "title": "#/" + warn.path.join('/'),
-                                            "value": warn.message,
-                                            "short": false
-                                        });
-                                    }
-                                    var attachments = [
-                                        {
-                                            "fallback": "Swagger document is not valid",
-                                            "pretext": "Warnings:",
-                                            "color": "warning",
-                                            "fields": fields
-                                        }
-                                    ]
-                                    message.attachments = attachments;
-
-                                    slack.send(message, function (err, response) {
-                                        console.log(response);
-                                    });
+                                if (err) {
+                                    throw err;
                                 }
 
-                            } else {
-                                logger.error('Swagger document is valid');
+                                if (typeof result !== 'undefined') {
+                                    var splitPath = fromPath.split(path.sep);
+                                    var url = 'https://github.com/ausdigital/' + repo + '/blob/master/docs/' + splitPath[splitPath.length - 2] + '/swagger.json';
+                                    var message = {
+                                        channel: "#api-monitoring",
+                                        username: "swagger",
+                                        text: repo + ": Swagger document is not valid: <" + url + "|swagger.json>",
+                                        attachments: []
+                                    };
+                                    if (result.errors.length > 0) {
+                                        var fields = [];
+                                        for (var i = 0; i < result.errors.length; i++) {
+                                            logger.error(result.errors[i]);
+                                            var err = result.errors[i];
+                                            fields.push({
+                                                "title": "#/" + err.path.join('/'),
+                                                "value": err.message,
+                                                "short": false
+                                            });
+                                        }
+                                        var attachments = [
+                                            {
+                                                "fallback": "Swagger document is not valid",
+                                                "pretext": "Errors:",
+                                                "color": "danger",
+                                                "fields": fields
+                                            }
+                                        ]
+                                        message.attachments = attachments;
+
+                                        slack.send(message, function (err, response) {
+                                            console.log(response);
+                                        });
+                                    }
+                                    if (result.warnings.length > 0) {
+                                        var fields = [];
+                                        for (var i = 0; i < result.warnings.length; i++) {
+                                            logger.error(result.warnings[i]);
+                                            var warn = result.warnings[i];
+                                            fields.push({
+                                                "title": "#/" + warn.path.join('/'),
+                                                "value": warn.message,
+                                                "short": false
+                                            });
+                                        }
+                                        var attachments = [
+                                            {
+                                                "fallback": "Swagger document is not valid",
+                                                "pretext": "Warnings:",
+                                                "color": "warning",
+                                                "fields": fields
+                                            }
+                                        ]
+                                        message.attachments = attachments;
+
+                                        slack.send(message, function (err, response) {
+                                            console.log(response);
+                                        });
+                                    }
+
+                                } else {
+                                    logger.error('Swagger document is valid');
+                                }
                             }
-                        });
+                        })(repoName));
                         try {
                             var deref = require('deref');
                             $ = deref();
