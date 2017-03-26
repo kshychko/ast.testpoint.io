@@ -249,7 +249,7 @@ function processAPI() {
                         try {
                             var deref = require('deref');
                             $ = deref();
-                            fs.writeFileSync(toPath, JSON.stringify($(result)));
+                            fs.writeFileSync(toPath, JSON.stringify($(document)));
                         } catch (e) {
                             logger.error(e);
                         }
