@@ -128,9 +128,10 @@ function copyFromDocs(index) {
             })
             .addConfig('user.name', 'Specification Generator')
             .addConfig('user.email', 'specs.generator@ausdigital.org')
-            .add(baseDir + repoNames[0] + '/specs/!*')
+            .add(baseDir + repoNames[0] + '/specs/*')
             .commit("update specifications pages")
             .push(['-u', 'origin', 'master'], function () {
+                logger.error("Push is finished");
             });
     }
 }
