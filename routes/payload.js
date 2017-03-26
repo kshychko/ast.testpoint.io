@@ -51,8 +51,6 @@ router.post('/', function (req, res, next) {
         res.send('webhook was received');
 
         gitPullNextRepo(0);
-        /**/
-
 
     } else {
         res.send(eventType + ' was received');
@@ -133,7 +131,6 @@ function copyFromDocs(index) {
             .add(baseDir + repoNames[0] + '/specs/!*')
             .commit("update specifications pages")
             .push(['-u', 'origin', 'master'], function () {
-                logger.error("Push is done.")
             });
     }
 }
