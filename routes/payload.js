@@ -11,6 +11,8 @@ var path = require('path');
 var execSync = require('sync-exec');
 var spec = require('swagger-tools').specs.v2; // Using the latest Swagger 2.x specification
 var Slack = require('node-slack');
+var pd = require('pretty-data').pd;
+pd.step = "    ";
 
 webhookUri = "https://hooks.slack.com/services/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";
 
@@ -58,12 +60,12 @@ router.post('/', function (req, res, next) {
 });
 
 var repoNames = ["ausdigital.github.io", "ausdigital-bill", "ausdigital-dcl", "ausdigital-dcp", "ausdigital-idp", "ausdigital-nry",
- "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
+    "ausdigital-syn", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
 
 var baseDir = '/opt/'
 /*
-var baseDir = 'd://work/aus-tp-github/'
-*/
+ var baseDir = 'd://work/aus-tp-github/'
+ */
 function gitPullNextRepo(index) {
 
     var repoName = repoNames[index];
@@ -250,7 +252,8 @@ function processAPI() {
                         try {
                             var deref = require('deref');
                             $ = deref();
-                            fs.writeFileSync(toPath, JSON.stringify($(document)));
+                            var res = $(document);
+                            fs.writeFileSync(toPath, JSON.stringify(processJSON(res)));
                         } catch (e) {
                             logger.error(e);
                         }
@@ -259,6 +262,20 @@ function processAPI() {
             }
         }
     }
+}
+
+function processJSON(res) {
+    for (i in res) {
+        if (!!res[i] && typeof(res[i]) == "object") {
+            if (!!res[i]["example"] && typeof(res[i]["example"]) == "object") {
+                var example = res[i]["example"];
+                res[i]["example"] = {"application/json":pd.json(example)};
+            } else {
+                processJSON(res[i])
+            }
+        }
+    }
+    return res;
 }
 
 module.exports = router;
