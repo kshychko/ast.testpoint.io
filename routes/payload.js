@@ -163,7 +163,7 @@ function processAPI() {
                     if (file == "swagger.json") {
                         // Make one pass and make the file complete
                         var fromPath = path.join(copyFrom, file);
-                        var fileName = repoName + "_" + version.replace(".", "-") + "_" + file;
+                        var fileName = repoName + "_" + version.replaceAll(".", "-") + "_" + file;
                         logger.error(fileName);
                         var toPath = path.join(copyTo, fileName);
 
