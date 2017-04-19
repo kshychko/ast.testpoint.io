@@ -254,6 +254,12 @@ function processAPI() {
                             $ = deref();
                             var res = $(document);
                             fs.writeFileSync(toPath, JSON.stringify(processJSON(res)));
+
+                            //swagger2aglio -i petstore_expanded.yml -o examples/default.html
+                            var agiloPath = path.join(copyFrom, "agilo.html");
+                            execSync('bash sh/generate-agilo.sh'
+                                + ' -i "' + fromPath+ '" -o "' + agiloPath + '" -v ' + 'flatly' + ' -t ' + 'triple');
+
                         } catch (e) {
                             logger.error(e);
                         }
