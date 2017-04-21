@@ -257,6 +257,8 @@ function processAPI() {
 
                             //swagger2aglio -i petstore_expanded.yml -o examples/default.html
                             var agiloPath = path.join(copyFrom, "agilo.html");
+                            logger.error('bash sh/generate-agilo.sh'
+                                + ' -i "' + fromPath+ '" -o "' + agiloPath + '" -v ' + 'flatly' + ' -t ' + 'triple');
                             execSync('bash sh/generate-agilo.sh'
                                 + ' -i "' + fromPath+ '" -o "' + agiloPath + '" -v ' + 'flatly' + ' -t ' + 'triple');
 
