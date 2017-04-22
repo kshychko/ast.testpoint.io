@@ -144,6 +144,7 @@ function processAPI() {
         var baseFrom = baseDir + repoName + '/docs/';
         logger.error(baseFrom)
         var copyTo = baseDir + 'ausdigital.github.io/_data/'
+        var copyToForAgilo = baseDir + 'ausdigital.github.io/specs/'
         var docs = fs.readdirSync(baseFrom);
         for (var j = 0; j < docs.length; j++) {
             var version = docs[j];
@@ -255,8 +256,8 @@ function processAPI() {
                             var res = $(document);
                             fs.writeFileSync(toPath, JSON.stringify(processJSON(res)));
 
-                            //swagger2aglio -i petstore_expanded.yml -o examples/default.html
-                            var agiloPath = path.join(copyFrom, "agilo.html");
+                            var splitPath = fromPath.split(path.sep);
+                            var agiloPath = path.join(copyToForAgilo, repoName, "\/", splitPath[splitPath.length - 2], "/agilo.html");
                             logger.error('bash sh/generate-agilo.sh'
                                 + ' -i "' + fromPath+ '" -o "' + agiloPath + '" -v ' + 'flatly' + ' -t ' + 'triple');
                             execSync('bash sh/generate-agilo.sh'
