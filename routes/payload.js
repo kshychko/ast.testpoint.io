@@ -250,22 +250,6 @@ function processAPI() {
                                 }
                             }
                         })(repoName));
-                        try {
-                            var deref = require('deref');
-                            $ = deref();
-                            var res = $(document);
-                            fs.writeFileSync(toPath, JSON.stringify(processJSON(res)));
-
-                            var splitPath = fromPath.split(path.sep);
-                            var agiloPath = path.join(copyToForAgilo, repoName, "\/", splitPath[splitPath.length - 2], "/agilo.html");
-                            logger.error('bash sh/generate-agilo.sh'
-                                + ' -i "' + fromPath+ '" -o "' + agiloPath + '" -v ' + 'flatly' + ' -t ' + 'triple');
-                            execSync('bash sh/generate-agilo.sh'
-                                + ' -i "' + fromPath+ '" -o "' + agiloPath + '" -v ' + 'flatly' + ' -t ' + 'triple');
-
-                        } catch (e) {
-                            logger.error(e);
-                        }
                     }
                 }
             }
