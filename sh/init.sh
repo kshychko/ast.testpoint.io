@@ -12,7 +12,9 @@ git clone git@github.com:ausdigital/ausdigital-dcp.git
 git clone git@github.com:ausdigital/ausdigital-dcl.git
 git clone git@github.com:ausdigital/ausdigital-idp.git
 git clone git@github.com:ausdigital/ausdigital-nry.git
-git clone git@github.com:ausdigital/ausdigital-syn.git
+git clone git@github.com:ausdigital/ausdigital-syn-xml.git
+git clone git@github.com:ausdigital/ausdigital-syn-json.git
+git clone git@github.com:ausdigital/ausdigital-syn-sol.git
 git clone git@github.com:ausdigital/ausdigital-tap.git
 git clone git@github.com:ausdigital/ausdigital-tap-gw.git
 cp -rf /opt/ausdigital.github.io/. /srv/jekyll
