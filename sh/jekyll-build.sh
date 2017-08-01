@@ -36,7 +36,7 @@ bundle exec jekyll build
 RESULT=$?
 if [[ ${RESULT} -ne 0 ]]; then
 	echo -e "\nCan't bundle exec jekyll build"
-	exit
+	exit 1
 fi
 
 cp -rf /srv/jekyll/_site/specs/. /opt/$TARGET_REPO_NAME/specs
