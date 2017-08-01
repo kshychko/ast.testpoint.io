@@ -123,19 +123,37 @@ function copyFromDocs(index) {
             + ' -t ' + 'ausdigital.github.io');
 
         logger.error("exitCode " + exitCode.status);
-        logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.");
+        if (exitCode.status != 0){
+            var message = {
+                channel: "#api-monitoring",
+                username: "swagger",
+                text: "Jekyll build failed.",
+                attachments: [{
+                    "fallback": "Jekyll build failed.",
+                    "color": "danger",
+                    "fields": [{
+                        "title": "Jekyll build failed.",
+                        "value": "Please check the build logs.",
+                        "short": false
+                    }]
+                }]
+            };
+             slack.send(message);
+        } else {
+            logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.");
 
-        /*require('simple-git')(baseDir + repoNames[0])
-            .then(function () {
-                logger.error('Starting push... ' + repoNames[0]);
-            })
-            .addConfig('user.name', 'Specification Generator')
-            .addConfig('user.email', 'specs.generator@ausdigital.org')
-            .add(baseDir + repoNames[0] + '/specs/*')
-            .commit("update specifications pages")
-            .push(['-u', 'origin', 'master'], function () {
-                logger.error("Push is finished");
-            });*/
+            require('simple-git')(baseDir + repoNames[0])
+                .then(function () {
+                    logger.error('Starting push... ' + repoNames[0]);
+                })
+                .addConfig('user.name', 'Specification Generator')
+                .addConfig('user.email', 'specs.generator@ausdigital.org')
+                .add(baseDir + repoNames[0] + '/specs/*')
+                .commit("update specifications pages")
+                .push(['-u', 'origin', 'master'], function () {
+                    logger.error("Push is finished");
+            });
+        }
     }
 }
 
