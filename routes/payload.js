@@ -183,8 +183,14 @@ function processAPI() {
                 for (var k = 0; k < files.length; k++) {
                     var file = files[k];
                     if (file == "swagger.yaml") {
-                        // Make one pass and make the file complete
                         var fromPath = path.join(copyFrom, file);
+                        var fromPathJSON = path.join(copyFrom, "swagger.json");
+                        execSync('yaml2json ' + fromPath + ' > ' + fromPathJSON, function (err, stdout, stderr) {
+                            logger.error(err)
+                            logger.error(stdout)
+                            logger.error(stderr);
+                        });
+                        // Make one pass and make the file complete
                         var fileName = repoName + "_" + version.replace(/\./g, '-') + "_" + file;
                         logger.error(fileName);
                         var toPath = path.join(copyTo, fileName);
@@ -195,9 +201,9 @@ function processAPI() {
                         else if (stat.isDirectory())
                             logger.error("'%s' is a directory.", fromPath);
 
-                        var document = YAML.parse(fs.readFileSync(fromPath));
+                        var document = JSON.parse(fs.readFileSync(fromPathJSON));
 
-                        logger.error("validating " + fromPath);
+                        logger.error("validating " + fromPathJSON);
 
                         spec.validate(document, (function (repo) {
                             return function (err, result) {
