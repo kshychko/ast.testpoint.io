@@ -12,6 +12,8 @@ var execSync = require('sync-exec');
 var spec = require('swagger-tools').specs.v2; // Using the latest Swagger 2.x specification
 var Slack = require('node-slack');
 var pd = require('pretty-data').pd;
+var YAML = require('yamljs');
+
 pd.step = "    ";
 
 webhookUri = "https://hooks.slack.com/services/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";
@@ -180,7 +182,7 @@ function processAPI() {
 
                 for (var k = 0; k < files.length; k++) {
                     var file = files[k];
-                    if (file == "swagger.json") {
+                    if (file == "swagger.yaml") {
                         // Make one pass and make the file complete
                         var fromPath = path.join(copyFrom, file);
                         var fileName = repoName + "_" + version.replace(/\./g, '-') + "_" + file;
@@ -193,7 +195,7 @@ function processAPI() {
                         else if (stat.isDirectory())
                             logger.error("'%s' is a directory.", fromPath);
 
-                        var document = JSON.parse(fs.readFileSync(fromPath));
+                        var document = YAML.parse(fs.readFileSync(fromPath));
 
                         logger.error("validating " + fromPath);
 
@@ -206,11 +208,11 @@ function processAPI() {
 
                                 if (typeof result !== 'undefined') {
                                     var splitPath = fromPath.split(path.sep);
-                                    var url = 'https://github.com/ausdigital/' + repo + '/blob/master/docs/' + splitPath[splitPath.length - 2] + '/swagger.json';
+                                    var url = 'https://github.com/ausdigital/' + repo + '/blob/master/docs/' + splitPath[splitPath.length - 2] + '/swagger.yaml';
                                     var message = {
                                         channel: "#api-monitoring",
                                         username: "swagger",
-                                        text: repo + ": Swagger document is not valid: <" + url + "|swagger.json>",
+                                        text: repo + ": Swagger document is not valid: <" + url + "|swagger.yaml>",
                                         attachments: []
                                     };
                                     if (result.errors.length > 0) {
