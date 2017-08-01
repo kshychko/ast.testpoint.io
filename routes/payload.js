@@ -12,7 +12,6 @@ var execSync = require('sync-exec');
 var spec = require('swagger-tools').specs.v2; // Using the latest Swagger 2.x specification
 var Slack = require('node-slack');
 var pd = require('pretty-data').pd;
-var YAML = require('yamljs');
 
 pd.step = "    ";
 
