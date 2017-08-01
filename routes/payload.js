@@ -119,12 +119,13 @@ function copyFromDocs(index) {
 
         processAPI();
 
-        execSync('bash sh/jekyll-build.sh'
+        var exitCode = execSync('bash sh/jekyll-build.sh'
             + ' -t ' + 'ausdigital.github.io');
 
+        logger.error("exitCode " + exitCode);
         logger.error("Jekyll build is finished. Commit and push changes.", "Jekyll build is finished. Commit and push changes.");
 
-        require('simple-git')(baseDir + repoNames[0])
+        /*require('simple-git')(baseDir + repoNames[0])
             .then(function () {
                 logger.error('Starting push... ' + repoNames[0]);
             })
@@ -134,7 +135,7 @@ function copyFromDocs(index) {
             .commit("update specifications pages")
             .push(['-u', 'origin', 'master'], function () {
                 logger.error("Push is finished");
-            });
+            });*/
     }
 }
 
