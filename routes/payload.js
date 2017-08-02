@@ -64,9 +64,7 @@ var repoNames = ["ausdigital.github.io", "ausdigital-bill", "ausdigital-dcl", "a
     "ausdigital-syn-xml", "ausdigital-syn-json", "ausdigital-syn-sol", "ausdigital-tap", "ausdigital-tap-gw", "ausdigital-code"];
 
 var baseDir = '/opt/'
-/*
- var baseDir = 'd://work/aus-tp-github/'
- */
+ /*var baseDir = 'd://work/aus-tp-github/'*/
 function gitPullNextRepo(index) {
 
     var repoName = repoNames[index];
@@ -184,11 +182,8 @@ function processAPI() {
                     if (file == "swagger.yaml") {
                         var fromPath = path.join(copyFrom, file);
                         var fromPathJSON = path.join(copyFrom, "swagger.json");
-                        execSync('yaml2json ' + fromPath + ' > ' + fromPathJSON, function (err, stdout, stderr) {
-                            logger.error(err)
-                            logger.error(stdout)
-                            logger.error(stderr);
-                        });
+                        logger.error('yaml2json ' + fromPath + ' > ' + fromPathJSON)
+                        var t = execSync('yaml2json ' + fromPath + ' > ' + fromPathJSON);
                         // Make one pass and make the file complete
                         var fileName = repoName + "_" + version.replace(/\./g, '-') + "_" + file;
                         logger.error(fileName);
